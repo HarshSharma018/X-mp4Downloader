@@ -2,9 +2,8 @@ const { exec } = require('child_process');
 
 function getVideoInfo(url) {
   return new Promise((resolve, reject) => {
-    const command = `yt-dlp -j "${url}"`;
 
-    exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+    exec(`yt-dlp -j "${url}"`, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
       if (error) {
         return reject(error);
       }
