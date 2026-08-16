@@ -24,4 +24,4 @@ async function createDownload(req, res)
   
 }
 
-module.exports = { createDownload };
+module.exports = { createDownload, downloadVideoFile, startDownloadJob };

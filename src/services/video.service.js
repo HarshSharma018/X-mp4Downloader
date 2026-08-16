@@ -26,4 +26,4 @@ function getVideoInfo(url) {
   });
 }
 
-module.exports = { getVideoInfo };
+module.exports = { getVideoInfo, downloadVideo };
