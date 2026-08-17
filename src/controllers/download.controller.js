@@ -1,5 +1,6 @@
 const { getVideoInfo, downloadVideo } = require('../services/video.service');
-const { createJob, updateJob } = require('../services/job.store');
+const { createRecord } = require('../services/download.record');
+const downloadQueue = require('../queues/download.queue');
 
 async function createDownload(req, res) {
   const { url } = req.body;
@@ -37,23 +38,17 @@ async function downloadVideoFile(req, res) {
   }
 }
 
-function startDownloadJob(req, res) {
+async function startDownloadJob(req, res) {
   const { url } = req.body;
 
   if (!url || typeof url !== 'string') {
     return res.status(400).json({ error: 'url is required' });
   }
 
-  const jobId = createJob();
-  res.status(202).json({ jobId, status: 'queued' });
+  const job = await downloadQueue.add('download', { url });
+  await createRecord(job.id, url);
 
-  downloadVideo(url)
-    .then(({ fileName }) => {
-      updateJob(jobId, { status: 'completed', result: { downloadUrl: `/files/${fileName}` } });
-    })
-    .catch((err) => {
-      updateJob(jobId, { status: 'failed', error: err.message });
-    });
+  res.status(202).json({ jobId: job.id, status: 'queued' });
 }
 
 module.exports = { createDownload, downloadVideoFile, startDownloadJob };
