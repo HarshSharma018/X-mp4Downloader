@@ -3,9 +3,11 @@ const path = require('path');
 
 function getVideoInfo(url) {
   return new Promise((resolve, reject) => {
+    
     const command = `yt-dlp -j "${url}"`;
 
     exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+
       if (error) return reject(error);
 
       const data = JSON.parse(stdout);
@@ -28,7 +30,10 @@ function getVideoInfo(url) {
 
 function downloadVideo(url) {
   return new Promise((resolve, reject) => {
+
     const outputTemplate = path.join(__dirname, '../../downloads/%(id)s.%(ext)s');
+
+  
     const command = `yt-dlp -f "best[ext=mp4]" -o "${outputTemplate}" --print filename "${url}"`;
 
     exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
