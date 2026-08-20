@@ -5,8 +5,8 @@ const path = require('path');
 
 const downloadRoutes = require('./routes/download.routes');
 const jobRoutes = require('./routes/job.routes');
-const downloadLimiter = require('./middlewares/rateLimit.middleware');
-const errorHandler = require('./middlewares/error.middleware');
+const downloadLimiter = require('./middlewares/rateLimit');
+const errorHandler = require('./middlewares/error');
 
 const app = express();
 
