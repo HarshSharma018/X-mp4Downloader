@@ -8,8 +8,8 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY package*.json ./w
-RUN npm ci --omit=dev
+COPY package*.json ./
+RUN npm install --omit=dev
 
 COPY . .
 

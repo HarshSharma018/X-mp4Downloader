@@ -7,3 +7,8 @@ A production-style backend service for downloading videos from X (Twitter), buil
 Most video-downloader projects are a single blocking endpoint that runs a CLI tool and waits. This one is built the way a real production service would handle unpredictable, slow external work: jobs are queued, processed in the background by dedicated workers, and tracked in a database — so the API stays fast and responsive no matter how long a download takes.
 
 ## Architecture
+
+
+Client → Express API → BullMQ Queue (Redis) → Worker → yt-dlp → File storage
+↓ ↓
+PostgreSQL (job records) ←───────────────┘

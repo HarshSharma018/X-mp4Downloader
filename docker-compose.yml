@@ -32,7 +32,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - downloads:/app/downloads
+      - ./backend/downloads:/app/downloads
     command: ["node", "src/server.js"]
 
   worker:
@@ -46,9 +46,8 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     volumes:
-      - downloads:/app/downloads
+      - ./backend/downloads:/app/downloads
     command: ["node", "src/workers/download.worker.js"]
 
 volumes:
   pgdata:
-  downloads:
