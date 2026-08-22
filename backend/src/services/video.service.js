@@ -1,4 +1,3 @@
-
 const { execFile } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -45,6 +44,7 @@ async function downloadVideo(url) {
     '-f', 'best[ext=mp4]',
     '-o', outputTemplate,
     '--no-playlist',
+    '--print', '%(thumbnail)s',
     '--print', 'after_move:filepath',
     url,
   ];
@@ -53,6 +53,7 @@ async function downloadVideo(url) {
 
   const lines = stdout.trim().split('\n').filter(Boolean);
   const filePath = lines[lines.length - 1];
+  const thumbnail = lines.length > 1 ? lines[0] : null;
 
   if (!filePath) {
     throw new Error('yt-dlp did not report a final file path (empty --print output)');
@@ -63,7 +64,7 @@ async function downloadVideo(url) {
   }
 
   const fileName = path.basename(filePath);
-  return { filePath, fileName };
+  return { filePath, fileName, thumbnail };
 }
 
 module.exports = { getVideoInfo, downloadVideo };
