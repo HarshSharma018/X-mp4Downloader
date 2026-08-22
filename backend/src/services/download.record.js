@@ -2,7 +2,10 @@ const pool = require('../config/database');
 
 async function createRecord(jobId, url) {
   await pool.query(
-    'INSERT INTO downloads (job_id, url, status) VALUES ($1, $2, $3)',
+    `INSERT INTO downloads (job_id, url, status)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (job_id)
+     DO UPDATE SET url = EXCLUDED.url, status = EXCLUDED.status, updated_at = NOW()`,
     [jobId, url, 'queued']
   );
 }
