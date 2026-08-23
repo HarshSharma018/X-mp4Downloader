@@ -10,8 +10,7 @@ const downloadLimiter = require('./middlewares/rateLimit');
 const errorHandler = require('./middlewares/error');
 
 const app = express();
-app.use(cors())(allow-all);
-
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
