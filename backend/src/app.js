@@ -3,8 +3,9 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const routes = require('./routes/routes');
-const downloadLimiter = require('./middlewares/rateLimit');
-const errorHandler = require('./middlewares/errorHandler');
+
+const { downloadLimiter, errorHandler } = require('./middlewares/middlewares');
+
 const { DOWNLOADS_DIR } = require('./services/download');
 
 const app = express();
