@@ -1,5 +1,5 @@
 const express = require('express');
-const validateUrl = require('../middlewares/validateUrl');
+const { validateUrl } = require('../middlewares/middlewares');
 const {
   getMetadata,
   downloadFile,
