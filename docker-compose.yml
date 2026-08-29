@@ -6,11 +6,14 @@ services:
       POSTGRES_USER: xdl_user
       POSTGRES_PASSWORD: devpassword123
       POSTGRES_DB: xdownloader
+      
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
     ports:
       - "5432:5432"
+
 
   redis:
     image: redis:7-alpine
@@ -35,6 +38,7 @@ services:
       - ./backend/downloads:/app/downloads
     command: ["node", "src/server.js"]
 
+
   worker:
     build: ./backend
     restart: unless-stopped
@@ -47,7 +51,8 @@ services:
       REDIS_PORT: 6379
     volumes:
       - ./backend/downloads:/app/downloads
-    command: ["node", "src/workers/download.worker.js"]
+
+    command: ["node", "src/workers/worker.js"]
 
 volumes:
   pgdata:
