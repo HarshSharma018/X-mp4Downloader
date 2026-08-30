@@ -10,7 +10,7 @@ done
 echo "Redis is up."
 
 echo "Starting worker..."
-node src/workers/download.worker.js &
+node src/workers/worker.js  &
 
 echo "Starting API..."
 exec node src/server.js
