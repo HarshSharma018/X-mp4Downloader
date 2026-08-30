@@ -51,7 +51,7 @@ function downloadVideo(url) {
       { maxBuffer: 1024 * 1024 * 10, timeout: YTDLP_TIMEOUT_MS },
       (error, stdout, stderr) => {
         if (error) {
-          return reject(new Error(stderr?.trim() || error.message));
+          return reject( new Error(stderr?.trim() || error.message));
         }
 
         const filePath = stdout.trim().split('\n').pop();
