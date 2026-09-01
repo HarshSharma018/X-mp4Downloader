@@ -42,34 +42,50 @@ function getVideoInfo(url) {
 }
 
 function downloadVideo(url) {
+
   return new Promise((resolve, reject) => {
+
     const outputTemplate = path.join(DOWNLOADS_DIR, '%(id)s.%(ext)s');
 
-    execFile(
-      'yt-dlp',
-      ['-f', 'best[ext=mp4]/best', '-o', outputTemplate, '--print', 'after_move:filepath', url],
-      { maxBuffer: 1024 * 1024 * 10, timeout: YTDLP_TIMEOUT_MS },
-      (error, stdout, stderr) => {
-        if (error) {
-          return reject( new Error(stderr?.trim() || error.message));
-        }
 
-        const filePath = stdout.trim().split('\n').pop();
+    const args = [
+      '-f', 'best[ext=mp4]/best',
+       '-o', outputTemplate,
+      '--print', '%(thumbnail)s',
+      '--print',  'after_move:filepath',
 
-        if (!filePath || !fs.existsSync(filePath)) {
-          return reject(new Error('yt-dlp reported success but no file was found on disk'));
-        }
+      url,
 
-        const fileName = path.basename(filePath);
-        logger.info(`Downloaded: ${fileName}`);
-        resolve({ filePath, fileName });
+    ];
+
+    const options =  { maxBuffer: 1024 * 1024 * 10,  timeout: YTDLP_TIMEOUT_MS };
+
+    execFile('yt-dlp', args, options, (error, stdout, stderr) => {
+
+      if (error) {
+        return reject(new Error(stderr?.trim() || error.message));
       }
-    );
+
+      const lines = stdout.trim().split('\n').filter(Boolean);
+      const filePath = lines[lines.length - 1];
+
+      const thumbnail = lines.length > 1 ? lines[0] : null;
+
+      if (!filePath || !fs.existsSync(filePath)) {
+
+        return reject(new Error('yt-dlp oper was '));
+      }
+
+      const fileName = path.basename(filePath);
+    logger.info(`Downloaded: ${fileName}`);
+  resolve({ filePath, fileName, thumbnail });
+    });
   });
 }
+
 
 function fileExists(fileName) {
   return fs.existsSync(path.join(DOWNLOADS_DIR, fileName));
 }
 
-module.exports = { getVideoInfo, downloadVideo, fileExists, DOWNLOADS_DIR };
+module.exports =  { getVideoInfo, downloadVideo,  fileExists, DOWNLOADS_DIR };
