@@ -1,14 +1,42 @@
 # X Video Downloader
 
-A production-style backend service for downloading videos from X (Twitter), built to demonstrate real backend engineering patterns: async job queues, containerization, and persistent storage — not just a CRUD wrapper around yt-dlp.
+Downloads videos from X (Twitter). Paste a tweet URL, get an MP4.
 
-## Why this exists
+Built around an async job queue instead of a blocking request, so the API stays responsive regardless of how long a download takes.
 
-Most video-downloader projects are a single blocking endpoint that runs a CLI tool and waits. This one is built the way a real production service would handle unpredictable, slow external work: jobs are queued, processed in the background by dedicated workers, and tracked in a database — so the API stays fast and responsive no matter how long a download takes.
+# Live
+
+- Live: https://x-mp4downloader-1.onrender.com
+
 
 ## Architecture
 
+```
+Browser → Express API → BullMQ Queue (Redis) → Worker → yt-dlp → File saved
+              ↓                                            ↓
+           Postgres  ←──────────── job status ──────────────┘
+```
 
-Client → Express API → BullMQ Queue (Redis) → Worker → yt-dlp → File storage
-↓ ↓
-PostgreSQL (job records) ←───────────────┘
+1. Client submits a URL → API validates it, queues a job, returns a `jobId` immediately
+2. Worker picks up the job, runs `yt-dlp`, downloads the video
+3. Worker writes the result to Postgres
+4. Client polls `GET /api/jobs/:id` until status is `completed`
+
+## Stack
+
+Node.js, Express, BullMQ, Redis, PostgreSQL, yt-dlp, ffmpeg, Docker, React (Vite)
+
+##structure 
+
+```
+backend/src/
+├── routes/         URL → handler mapping
+├── controllers/    request handling logic
+├── services/       yt-dlp integration
+├── queues/         Redis connection + BullMQ producer
+├── workers/        BullMQ consumer (background processing)
+├── middlewares/     validation, rate limiting, error handling
+├── config/            database setup
+└── utils/               logging
+frontend/           React + Vite
+```
